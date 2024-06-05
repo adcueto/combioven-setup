@@ -1,6 +1,8 @@
-# script to upload the app to the forlinx board
+- Python 3.8.5
+# Script to upload the app to the forlinx board
 ![Logo de la aplicación](/img/board.png)
 ## Pasos para cargar la aplicación:
+Copia toda los archivos del repositorio a una memoria usb en formato EXT o FAT.
 
 ### 1. Crear carpeta usb
 ```bash
