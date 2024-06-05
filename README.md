@@ -29,7 +29,8 @@ sudo chmod +x app.sh
 ### 5. Ejecutar el script para cargar la aplicación
 ```bash
 #Ejemplo
-./app.sh 1.5.2
+./app.sh rollback 1.5.2
+./app.sh update
 ```
 
 ### 6. Finalmente desmontar la memoria usb
