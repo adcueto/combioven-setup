@@ -10,8 +10,7 @@ fi
 version="$1"
 
 # Archivo de registro
-log_file = "out.log"
-rm -f $log_file
+log_file="/var/log/usboven.log"
 
 # Función para registrar mensajes en el archivo de registro
 log_message() {
@@ -32,7 +31,7 @@ sudo mkdir -p /usr/crank/apps/ProServices
 
 # 3. Copiar archivo zip a runtimes y descomprimirlo
 log_message "Descomprimiendo archivo linux-imx8yocto-armle-opengles" 
-sudo unzip /media/usb/linux/linux-imx8yocto-armle-opengles_2.0-7.0-40118.zip -d /usr/crank/runtimes/
+sudo unzip -o /media/usb/linux/linux-imx8yocto-armle-opengles_2.0-7.0-40118.zip -d /usr/crank/runtimes/
 
 # 4. Asignar permisos 775 a runtimes y apps
 log_message "Asignnando permisos 775 al directorio runtimes y apps"
@@ -83,20 +82,23 @@ sudo systemctl enable storyboard_splash.service
 sudo systemctl enable storyboard.service
 sudo systemctl enable combi_backend.service
 sudo systemctl enable wpa_supplicant@wlan0.service
-sudp systemctl enable systemd-resolved.service
+sudo systemctl enable systemd-resolved.service
 
 sudo systemctl start storyboard_splash.service
 sudo systemctl start storyboard.service
 sudo systemctl start combi_backend.service
+sudo systemctl start wpa_supplicant@wlan0.service
+sudo systemctl start systemd-resolved.service
 
 
 #11. Cambiar el nombre del servicio weston
 log_message "Cambiando el nombre del servicio weston" 
-if [ -e "/lib/systemd/system/weston.service"];then #verifica si existe el archivo
+if [ -e "/lib/systemd/system/weston.service"]; then #verifica si existe el archivo
     sudo mv /lib/systemd/system/weston.service /lib/systemd/system/weston_Pro_S.service
+    log_message "El nombre del servicio weston fue cambiado correctamente."
 else 
     log_message "El archivo ya fue cambiado."
-
+fi
 #12. Copiar contenido de la carpeta "Application" a /usr/crank/apps/Pro-Services"
 log_message "Copiando la versión $version a la carpeta apps" 
 sudo cp -f -r /media/usb/app/* /usr/crank/apps/ProServices/
@@ -109,4 +111,3 @@ cp -f /media/usb/img/logo.bmp /run/media/mmcblk2p1/logo.bmp
 
 #14. Reiniciar
 sudo reboot
-
