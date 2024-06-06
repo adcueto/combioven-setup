@@ -1,4 +1,3 @@
-- Python 3.8.5
 # Script to upload the app to the forlinx board
 ![Logo de la aplicación](/img/board.png)
 ## Pasos para cargar la aplicación:
@@ -29,8 +28,8 @@ sudo chmod +x app.sh
 ### 5. Ejecutar el script para cargar la aplicación
 ```bash
 #Ejemplo
-./app.sh rollback 1.5.2
-./app.sh update
+/media/usb/app.sh rollback 1.5.2
+/media/usb//app.sh update
 ```
 
 ### 6. Finalmente desmontar la memoria usb
