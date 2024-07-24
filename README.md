@@ -21,7 +21,7 @@ El script `setup_combioven.sh` automatiza el proceso de copia de archivos de la 
 
 ### Fuentes
 
-- `usb`: Utiliza archivos desde una unidad USB montada en `/media/usb`.
+- `usb`: Utiliza archivos desde una unidad USB montada en `/media/usb` con o sin internet.
 - `github`: Descarga y utiliza archivos desde un repositorio de GitHub.
 
 ### Parámetros
@@ -59,7 +59,7 @@ sudo chmod +x /media/usb/setup_combioven.sh
 ### 5. Ejecutar el script para cargar la aplicación
 #Ejemplo para realizar rollback
 ```bash
-/media/usb/setup_combioven.sh rollback usb 1.5.2
+/media/usb/setup_combioven.sh rollback usb 1.5.2 
 ```
 #Ejemplo para realizar actualizar a la ultima versión de software
 ```bash
@@ -75,15 +75,15 @@ sudo umount /media/usb
 
 ### 1. Conectarse a una red wifi
 ```bash
-wifi.sh -i wlan0 -s PRO-SERVICIOS -p M4W2_AE566x
+wifi.sh -i wlan0 -s NETWORK -p PASSWORD
 ```
 ### 2. Ejecutar el script de actualización
 #Para actualizar a la ultima version
 ```bash
-curl -sS https://raw.githubusercontent.com/tuusuario/combioven-setup/master/setup_combioven.sh | bash -s update github
+curl -sS https://raw.githubusercontent.com/adcueto/usb_combioven/master/setup_combioven.sh | bash -s update github
 ```
 
 #Para realizar rollback a una version anterior, asegurate que la versión exista en el repositorio.
 ```bash
-curl -sS https://raw.githubusercontent.com/adcueto/usb_combioven/master/app_from_github.sh | bash -s rollback 1.6.3
+curl -sS https://raw.githubusercontent.com/adcueto/usb_combioven/master/setup_combioven.sh | bash -s rollback github 1.6.3
 ```

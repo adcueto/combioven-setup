@@ -51,8 +51,8 @@ log_message() {
 > "$LOG_FILE"
 
 # Check arguments
-if [[ $# -lt 2 ]]; then
-    log_message "Error: You must specify 'update' or 'rollback <software_version>' as an argument and 'usb' or 'github' as source."
+if [[ $# -lt 2 ]] || [[ "$1" != "update" && "$1" != "rollback" ]] || [[ "$2" != "usb" && "$2" != "github" ]] || ([[ "$1" == "rollback" ]] && [[ -z "$3" ]]); then
+    log_message "Error: Invalid arguments."
     log_message "Usage: $0 update usb | update github | rollback usb <software_version> | rollback github <software_version>"
     exit 1
 fi
@@ -60,17 +60,6 @@ fi
 operation=$1
 source=$2
 version=$3
-
-if [[ "$operation" != "update" && "$operation" != "rollback" ]]; then
-    echo "Error: Invalid operation. Use 'update' or 'rollback <software_version>'."
-    exit 1
-fi
-
-if [[ "$operation" == "rollback" && -z "$version" ]]; then
-    echo "Error: You must specify the software version for rollback."
-    echo "Usage: $0 rollback usb <software_version> | rollback github <software_version>"
-    exit 1
-fi
 
 log_message "Starting the application transfer..."
 
@@ -121,7 +110,7 @@ if [[ ! -d "$APP_PATH" ]]; then
     exit 1
 fi
 
-LATEST_VERSION=$(ls -v "$APP_PATH/app" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | tail -n 1)
+LATEST_VERSION=$(ls -v "$APP_PATH/gui" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | tail -n 1)
 log_message "Latest version found: $LATEST_VERSION"
 
 # Create necessary directories
@@ -228,12 +217,12 @@ if [[ "$operation" == "update" ]]; then
         log_message "No versions found in $APP_PATH/app"
         exit 1
     else
-        sudo cp -f -r "$APP_PATH/app/$LATEST_VERSION/"* "$APP_DEST"
+        sudo cp -f -r "$APP_PATH/gui/$LATEST_VERSION/"* "$APP_DEST"
         log_message "Software version $LATEST_VERSION updated"
     fi
 else
     log_message "Rolling back to version $version..."
-    sudo cp -f -r "$APP_PATH/app/$version/"* "$APP_DEST"
+    sudo cp -f -r "$APP_PATH/gui/$version/"* "$APP_DEST"
 fi
 
 # Change boot logo
