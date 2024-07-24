@@ -147,12 +147,12 @@ sudo chmod -R 775 /usr/crank/runtimes /usr/crank/apps
 
 # Copy scripts
 log_message "Copying scripts to /usr/crank..."
-if [[ ! -d "$APP_PATH/scripts" ]]; then
-    log_message "Error: Scripts directory not found."
-    exit 1
+if [[ -d "$APP_PATH/scripts" ]]; then
+    sudo cp -f -r "$APP_PATH/scripts/"* /usr/crank/
+    sudo chmod 775 /usr/crank/*
+else
+    log_message "Warning: Scripts directory not found. Skipping script copying."
 fi
-sudo cp -f -r "$APP_PATH/scripts/"* /usr/crank/
-sudo chmod 775 /usr/crank/*
 
 # Copy and configure services
 log_message "Copying and configuring services..."
