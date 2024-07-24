@@ -1,6 +1,7 @@
-# Script to upload the app to the forlinx board
+# Script to upload the crank software app to the forlinx board
 ![Logo de la aplicación](/img/board.png)
-## Pasos para cargar la aplicación:
+
+## Pasos para cargar la aplicación desde una USB:
 Copia toda los archivos del repositorio a una memoria usb en formato EXT o FAT.
 
 ### 1. Crear carpeta usb
@@ -23,13 +24,13 @@ sudo mount -t ext4 /dev/sda1 /media/usb
 ```
 ### 4. Dar permisos de ejecución
 ```bash
-sudo chmod +x app.sh
+sudo chmod +x /media/usb/app.sh
 ```
 ### 5. Ejecutar el script para cargar la aplicación
 ```bash
 #Ejemplo
 /media/usb/app.sh rollback 1.5.2
-/media/usb//app.sh update
+/media/usb/app.sh update
 ```
 
 ### 6. Finalmente desmontar la memoria usb
@@ -37,3 +38,18 @@ sudo chmod +x app.sh
 sudo umount /media/usb
 ```
 
+## Pasos para cargar la aplicación desde github:
+
+### 1. Conectarse a una red wifi
+```bash
+wifi.sh -i wlan0 -s PRO-SERVICIOS -p M4W2_AE566x
+```
+### 2. Ejecutar el script de actualización
+```bash
+#Para actualizar a la ultima version
+curl -sS https://raw.githubusercontent.com/adcueto/usb_combioven/master/app_from_github.sh | bash -s update
+```
+```bash
+#Para realizar rollback a una version anterior, asegurate que la verion exista en el repositorio.
+curl -sS https://raw.githubusercontent.com/adcueto/usb_combioven/master/app_from_github.sh | bash -s rollback 1.6.3
+```
