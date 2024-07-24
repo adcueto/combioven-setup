@@ -6,16 +6,6 @@
 # This script configures the NXP Yocto board for the first time to run the combioven application by updating or rolling back the application using files from a USB drive or a GitHub repository.
 # It automates the process of copying application files, setting permissions, and configuring system services to ensure a seamless setup.
 #
-# Usage:
-# ./setup_combioven.sh update usb
-# ./setup_combioven.sh update github
-# ./setup_combioven.sh rollback usb <software_version>
-# ./setup_combioven.sh rollback github <software_version>
-#
-# Examples:
-# ./setup_combioven.sh update usb                # Updates to the latest version available on the USB drive
-# ./setup_combioven.sh rollback github 1.5.2     # Rolls back to version 1.5.2 from GitHub
-#
 # Note:
 # Ensure the USB drive is mounted at /media/usb if using USB.
 # This script requires 'sudo' privileges to execute certain commands.
