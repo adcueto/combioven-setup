@@ -1,6 +1,35 @@
 # Script to upload the crank software app to the forlinx board
 ![Logo de la aplicación](/img/board.png)
 
+
+Este repositorio contiene el script `setup_combioven.sh` que configura una tarjeta NXP Yocto para que funcione con la aplicación CombiOven. El script puede actualizar o hacer rollback de la aplicación utilizando archivos desde una unidad USB o desde un repositorio de GitHub.
+
+## Descripción
+
+El script `setup_combioven.sh` automatiza el proceso de copia de archivos de la aplicación, configuración de permisos y configuración de servicios del sistema para asegurar una instalación sin problemas.
+
+## Uso
+
+```bash
+./setup_combioven.sh <operation> <source> [version]
+```
+
+### Operaciones
+
+- `update`: Actualiza la aplicación a la última versión disponible.
+- `rollback`: Realiza un rollback a una versión específica de la aplicación.
+
+### Fuentes
+
+- `usb`: Utiliza archivos desde una unidad USB montada en `/media/usb`.
+- `github`: Descarga y utiliza archivos desde un repositorio de GitHub.
+
+### Parámetros
+
+- `<operation>`: `update` o `rollback`.
+- `<source>`: `usb` o `github`.
+- `[version]`: La versión específica para hacer rollback (requerido solo para `rollback`).
+
 ## Pasos para cargar la aplicación desde una USB:
 
 ### 1. Crear carpeta usb
