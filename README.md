@@ -14,12 +14,13 @@ ls -l /dev/sd*
 ```
 
 ### 3. Montar la memoria USB
+#Para sistemas de archivos FAT (windows)
 ```bash
-# Para sistemas de archivos FAT (windows)
 sudo mount -t vfat /dev/sda1 /media/usb
 ```
+
+#Para sistemas de archivos ext4 (linux)
 ```bash
-# Para sistemas de archivos ext4 (linux)
 sudo mount -t ext4 /dev/sda1 /media/usb
 ```
 ### 4. Dar permisos de ejecución
@@ -27,9 +28,12 @@ sudo mount -t ext4 /dev/sda1 /media/usb
 sudo chmod +x /media/usb/app.sh
 ```
 ### 5. Ejecutar el script para cargar la aplicación
-#Ejemplo
+#Ejemplo para realizar rollback
 ```bash
 /media/usb/app.sh rollback 1.5.2
+```
+#Ejemplo para realizar actualizar a la ultima versión de software
+```bash
 /media/usb/app.sh update
 ```
 
@@ -50,7 +54,7 @@ wifi.sh -i wlan0 -s PRO-SERVICIOS -p M4W2_AE566x
 curl -sS https://raw.githubusercontent.com/adcueto/usb_combioven/master/app_from_github.sh | bash -s update
 ```
 
-#Para realizar rollback a una version anterior, asegurate que la verion exista en el repositorio.
+#Para realizar rollback a una version anterior, asegurate que la versión exista en el repositorio.
 ```bash
 curl -sS https://raw.githubusercontent.com/adcueto/usb_combioven/master/app_from_github.sh | bash -s rollback 1.6.3
 ```
