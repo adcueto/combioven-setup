@@ -2,9 +2,9 @@
 ![Logo de la aplicación](/img/board.png)
 
 ## Pasos para cargar la aplicación desde una USB:
-Copia toda los archivos del repositorio a una memoria usb en formato EXT o FAT.
 
 ### 1. Crear carpeta usb
+Copia toda los archivos del repositorio a una memoria usb en formato EXT o FAT.
 ```bash
 sudo mkdir /media/usb
 ```
@@ -27,8 +27,8 @@ sudo mount -t ext4 /dev/sda1 /media/usb
 sudo chmod +x /media/usb/app.sh
 ```
 ### 5. Ejecutar el script para cargar la aplicación
-```bash
 #Ejemplo
+```bash
 /media/usb/app.sh rollback 1.5.2
 /media/usb/app.sh update
 ```
@@ -45,11 +45,12 @@ sudo umount /media/usb
 wifi.sh -i wlan0 -s PRO-SERVICIOS -p M4W2_AE566x
 ```
 ### 2. Ejecutar el script de actualización
-```bash
 #Para actualizar a la ultima version
+```bash
 curl -sS https://raw.githubusercontent.com/adcueto/usb_combioven/master/app_from_github.sh | bash -s update
 ```
-```bash
+
 #Para realizar rollback a una version anterior, asegurate que la verion exista en el repositorio.
+```bash
 curl -sS https://raw.githubusercontent.com/adcueto/usb_combioven/master/app_from_github.sh | bash -s rollback 1.6.3
 ```
