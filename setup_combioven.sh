@@ -111,8 +111,9 @@ else
 fi
 
 # Verifying the extracted structure
-log_message "Verifying extracted structure..."
+log_message "Listing contents of the extracted directory:"
 ls -l "$TEMP_DIR/usb_combioven-master" | tee -a "$LOG_FILE"
+ls -l "$APP_PATH" | tee -a "$LOG_FILE"
 
 # Check if the required directories exist
 if [[ ! -d "$APP_PATH" ]]; then
@@ -152,6 +153,8 @@ sudo chmod -R 775 /usr/crank/runtimes /usr/crank/apps
 # Copy scripts
 log_message "Copying scripts to /usr/crank..."
 if [[ -d "$APP_PATH/scripts" ]]; then
+    log_message "Found scripts directory."
+    ls -l "$APP_PATH/scripts" | tee -a "$LOG_FILE"
     sudo cp -f -r "$APP_PATH/scripts/"* /usr/crank/
     sudo chmod 775 /usr/crank/*
 else
@@ -160,25 +163,18 @@ fi
 
 # Copy and configure services
 log_message "Copying and configuring services..."
-if [[ ! -d "$APP_PATH/services" ]]; then
+if [[ -d "$APP_PATH/services" ]]; then
+    log_message "Found services directory."
+    ls -l "$APP_PATH/services" | tee -a "$LOG_FILE"
+    for service in "${SERVICES[@]}"; do
+        IFS=":" read src dest <<< "$service"
+        sudo cp -f "$src" "$dest"
+        sudo chmod 0755 "$dest"
+    done
+else
     log_message "Error: Services directory not found."
     exit 1
 fi
-
-SERVICES=(
-    "$APP_PATH/services/storyboard_splash.service:/etc/systemd/system/"
-    "$APP_PATH/services/storyboard.service:/etc/systemd/system/"
-    "$APP_PATH/services/combi_backend.service:/lib/systemd/system/"
-    "$APP_PATH/services/wired.network:/etc/systemd/network/"
-    "$APP_PATH/services/wireless.network:/etc/systemd/network/"
-    "$APP_PATH/services/wpa_supplicant@wlan0.service:/etc/systemd/system/"
-)
-
-for service in "${SERVICES[@]}"; do
-    IFS=":" read src dest <<< "$service"
-    sudo cp -f "$src" "$dest"
-    sudo chmod 0755 "$dest"
-done
 
 # Remove connection handlers
 log_message "Removing connection handlers..."
