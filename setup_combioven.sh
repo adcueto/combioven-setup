@@ -36,8 +36,9 @@ GITHUB_REPO_URL="https://github.com/adcueto/usb_combioven/archive/refs/heads/mas
 TEMP_DIR="/tmp/github_repo"
 DOWNLOAD_FILE="/tmp/github_repo.zip"
 USB_PATH="/media/usb"
-APP_PATH_GITHUB="$TEMP_DIR/usb_combioven-master/app"
-APP_PATH_USB="$USB_PATH/app"
+EXTRACTED_DIR_NAME="usb_combioven-master"
+APP_PATH_GITHUB="$TEMP_DIR/$EXTRACTED_DIR_NAME"
+APP_PATH_USB="$USB_PATH"
 APP_DEST="/usr/crank/apps/ProServices"
 
 # Function to log messages to the log file
@@ -112,7 +113,6 @@ fi
 
 # Verifying the extracted structure
 log_message "Listing contents of the extracted directory:"
-ls -l "$TEMP_DIR/usb_combioven-master" | tee -a "$LOG_FILE"
 ls -l "$APP_PATH" | tee -a "$LOG_FILE"
 
 # Check if the required directories exist
@@ -121,7 +121,7 @@ if [[ ! -d "$APP_PATH" ]]; then
     exit 1
 fi
 
-LATEST_VERSION=$(ls -v "$APP_PATH" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | tail -n 1)
+LATEST_VERSION=$(ls -v "$APP_PATH/app" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | tail -n 1)
 log_message "Latest version found: $LATEST_VERSION"
 
 # Create necessary directories
@@ -131,7 +131,7 @@ sudo mkdir -p /usr/crank/apps /usr/crank/runtimes /usr/crank/apps/ProServices
 # Unzip file into runtimes
 log_message "Unzipping linux-imx8yocto-armle-opengles file..."
 if [[ "$source" == "github" ]]; then
-    ZIP_FILE="$TEMP_DIR/usb_combioven-master/linux/linux-imx8yocto-armle-opengles_2.0-7.0-40118.zip"
+    ZIP_FILE="$APP_PATH/linux/linux-imx8yocto-armle-opengles_2.0-7.0-40118.zip"
 else
     ZIP_FILE="$USB_PATH/linux/linux-imx8yocto-armle-opengles_2.0-7.0-40118.zip"
 fi
@@ -166,6 +166,15 @@ log_message "Copying and configuring services..."
 if [[ -d "$APP_PATH/services" ]]; then
     log_message "Found services directory."
     ls -l "$APP_PATH/services" | tee -a "$LOG_FILE"
+    SERVICES=(
+        "$APP_PATH/services/storyboard_splash.service:/etc/systemd/system/"
+        "$APP_PATH/services/storyboard.service:/etc/systemd/system/"
+        "$APP_PATH/services/combi_backend.service:/lib/systemd/system/"
+        "$APP_PATH/services/wired.network:/etc/systemd/network/"
+        "$APP_PATH/services/wireless.network:/etc/systemd/network/"
+        "$APP_PATH/services/wpa_supplicant@wlan0.service:/etc/systemd/system/"
+    )
+
     for service in "${SERVICES[@]}"; do
         IFS=":" read src dest <<< "$service"
         sudo cp -f "$src" "$dest"
@@ -216,21 +225,21 @@ log_message "Copying version $version to the apps directory..."
 if [[ "$operation" == "update" ]]; then
     log_message "Updating the application..."
     if [[ -z "$LATEST_VERSION" ]]; then
-        log_message "No versions found in $APP_PATH"
+        log_message "No versions found in $APP_PATH/app"
         exit 1
     else
-        sudo cp -f -r "$APP_PATH/$LATEST_VERSION/"* "$APP_DEST"
+        sudo cp -f -r "$APP_PATH/app/$LATEST_VERSION/"* "$APP_DEST"
         log_message "Software version $LATEST_VERSION updated"
     fi
 else
     log_message "Rolling back to version $version..."
-    sudo cp -f -r "$APP_PATH/$version/"* "$APP_DEST"
+    sudo cp -f -r "$APP_PATH/app/$version/"* "$APP_DEST"
 fi
 
 # Change boot logo
 log_message "Changing the system boot logo..."
 if [[ "$source" == "github" ]]; then
-    BOOT_LOGO="$TEMP_DIR/usb_combioven-master/img/logo.bmp"
+    BOOT_LOGO="$APP_PATH/img/logo.bmp"
 else
     BOOT_LOGO="$USB_PATH/img/logo.bmp"
 fi
