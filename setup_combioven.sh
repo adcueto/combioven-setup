@@ -110,6 +110,10 @@ else
     APP_PATH="$APP_PATH_USB"
 fi
 
+# Verifying the extracted structure
+log_message "Verifying extracted structure..."
+ls -l "$TEMP_DIR/usb_combioven-master" | tee -a "$LOG_FILE"
+
 # Check if the required directories exist
 if [[ ! -d "$APP_PATH" ]]; then
     log_message "Error: Directory '$APP_PATH' does not exist."
