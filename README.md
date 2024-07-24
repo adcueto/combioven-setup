@@ -54,16 +54,16 @@ sudo mount -t ext4 /dev/sda1 /media/usb
 ```
 ### 4. Dar permisos de ejecución
 ```bash
-sudo chmod +x /media/usb/app.sh
+sudo chmod +x /media/usb/setup_combioven.sh
 ```
 ### 5. Ejecutar el script para cargar la aplicación
 #Ejemplo para realizar rollback
 ```bash
-/media/usb/app.sh rollback 1.5.2
+/media/usb/setup_combioven.sh rollback usb 1.5.2
 ```
 #Ejemplo para realizar actualizar a la ultima versión de software
 ```bash
-/media/usb/app.sh update
+/media/usb/setup_combioven.sh update usb
 ```
 
 ### 6. Finalmente desmontar la memoria usb
@@ -80,7 +80,7 @@ wifi.sh -i wlan0 -s PRO-SERVICIOS -p M4W2_AE566x
 ### 2. Ejecutar el script de actualización
 #Para actualizar a la ultima version
 ```bash
-curl -sS https://raw.githubusercontent.com/adcueto/usb_combioven/master/app_from_github.sh | bash -s update
+curl -sS https://raw.githubusercontent.com/tuusuario/combioven-setup/master/setup_combioven.sh | bash -s update github
 ```
 
 #Para realizar rollback a una version anterior, asegurate que la versión exista en el repositorio.
