@@ -6,15 +6,6 @@
 # This script configures the NXP Yocto board for the first time to run the combioven application by updating or rolling back the application using files from a USB drive or a GitHub repository.
 # It automates the process of copying application files, setting permissions, and configuring system services to ensure a seamless setup.
 #
-# Note:
-# Ensure the USB drive is mounted at /media/usb if using USB.
-# This script requires 'sudo' privileges to execute certain commands.
-#
-# Dependencies:
-# - sudo: To execute commands with superuser privileges
-# - unzip: To extract application archives
-# - curl or wget: To download files from the GitHub repository if using GitHub
-#
 # Author:
 # Jose Adrian Perez Cueto
 # adrianjpca@gmail.com
@@ -33,6 +24,8 @@ APP_GUI="/usr/crank/apps/interface"
 APP_BACKEND="/usr/crank/apps/backend"
 APP_FIRMWARE="/usr/crank/apps/firmware"
 
+# Trap to clean up temporary files on exit
+trap "sudo rm -rf $TEMP_DIR $DOWNLOAD_FILE" EXIT
 
 # Function to log messages to the log file
 log_message() {
@@ -40,14 +33,19 @@ log_message() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $message" | tee -a "$LOG_FILE"
 }
 
+# Function to handle errors
+handle_error() {
+    local errmsg="$1"
+    log_message "Error: $errmsg"
+    exit 1
+}
+
 # Clear the log file at the start
 > "$LOG_FILE"
 
 # Check arguments
 if [[ $# -lt 2 ]] || [[ "$1" != "update" && "$1" != "rollback" ]] || [[ "$2" != "usb" && "$2" != "github" ]] || ([[ "$1" == "rollback" ]] && [[ -z "$3" ]]); then
-    log_message "Error: Invalid arguments."
-    log_message "Usage: $0 update usb | update github | rollback usb <software_version> | rollback github <software_version>"
-    exit 1
+    handle_error "Invalid arguments. Usage: $0 update usb | update github | rollback usb <software_version> | rollback github <software_version>"
 fi
 
 operation=$1
@@ -58,82 +56,43 @@ log_message "Starting the application transfer..."
 
 # Handle source: usb or github
 if [[ "$source" == "github" ]]; then
-    # Download the GitHub repository zip file
     log_message "Downloading the repository zip file from GitHub..."
-    if [[ -f "$DOWNLOAD_FILE" ]]; then
-        rm -f "$DOWNLOAD_FILE"
-    fi
+    [[ -f "$DOWNLOAD_FILE" ]] && rm -f "$DOWNLOAD_FILE"
+    
+    curl -L "$GITHUB_REPO_URL" -o "$DOWNLOAD_FILE" || handle_error "Failed to download repository zip file."
+    [[ -f "$DOWNLOAD_FILE" ]] || handle_error "Downloaded file not found."
 
-    curl -L "$GITHUB_REPO_URL" -o "$DOWNLOAD_FILE"
-    if [[ $? -ne 0 ]]; then
-        log_message "Error: Failed to download repository zip file."
-        exit 1
-    fi
-
-    # Check if the file was downloaded
-    if [[ ! -f "$DOWNLOAD_FILE" ]]; then
-        log_message "Error: Downloaded file not found."
-        exit 1
-    fi
-
-    # Extract the downloaded zip file
     log_message "Extracting the repository zip file..."
-    if [[ -d "$TEMP_DIR" ]]; then
-        rm -rf "$TEMP_DIR"
-    fi
+    [[ -d "$TEMP_DIR" ]] && rm -rf "$TEMP_DIR"
     mkdir -p "$TEMP_DIR"
-    unzip -o "$DOWNLOAD_FILE" -d "$TEMP_DIR"
-    if [[ $? -ne 0 ]]; then
-        log_message "Error: Failed to extract repository zip file."
-        exit 1
-    fi
+    unzip -o "$DOWNLOAD_FILE" -d "$TEMP_DIR" || handle_error "Failed to extract repository zip file."
 
     APP_PATH="$APP_PATH_GITHUB"
 else
     APP_PATH="$APP_PATH_USB"
 fi
 
-# Verifying the extracted structure
+# Verify the extracted structure
 log_message "Listing contents of the extracted directory:"
 ls -l "$APP_PATH" | tee -a "$LOG_FILE"
-
-# Check if the required directories exist
-if [[ ! -d "$APP_PATH" ]]; then
-    log_message "Error: Directory '$APP_PATH' does not exist."
-    exit 1
-fi
+[[ -d "$APP_PATH" ]] || handle_error "Directory '$APP_PATH' does not exist."
 
 LATEST_VERSION=$(ls -v "$APP_PATH/gui" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | tail -n 1)
 log_message "Latest version found: $LATEST_VERSION"
 
-# Create necessary directories
-log_message "Creating directory structure..."
+# Create necessary directories and clean existing ones
+log_message "Creating and cleaning directory structure..."
 sudo mkdir -p /usr/crank/apps /usr/crank/runtimes "$APP_GUI" "$APP_BACKEND" "$APP_FIRMWARE"
-sudo rm -rf "${APP_GUI:?}"/*
-sudo rm -rf "${APP_BACKEND:?}"/*
-sudo rm -rf "${APP_FIRMWARE:?}"/*
+sudo rm -rf "${APP_GUI:?}"/* "${APP_BACKEND:?}"/* "${APP_FIRMWARE:?}"/*
 
-
-# Unzip file into runtimes
+# Unzip the file into runtimes
 log_message "Unzipping linux-imx8yocto-armle-opengles file..."
-if [[ "$source" == "github" ]]; then
-    ZIP_FILE="$APP_PATH/linux/linux-imx8yocto-armle-opengles_2.0-7.0-40118.zip"
-else
-    ZIP_FILE="$USB_PATH/linux/linux-imx8yocto-armle-opengles_2.0-7.0-40118.zip"
-fi
-
-if [[ ! -f "$ZIP_FILE" ]]; then
-    log_message "Error: ZIP file not found: $ZIP_FILE"
-    exit 1
-fi
-sudo unzip -o "$ZIP_FILE" -d /usr/crank/runtimes/
-if [[ $? -ne 0 ]]; then
-    log_message "Error: Failed to unzip $ZIP_FILE"
-    exit 1
-fi
+ZIP_FILE="${APP_PATH}/linux/linux-imx8yocto-armle-opengles_2.0-7.0-40118.zip"
+[[ -f "$ZIP_FILE" ]] || handle_error "ZIP file not found: $ZIP_FILE"
+sudo unzip -o "$ZIP_FILE" -d /usr/crank/runtimes/ || handle_error "Failed to unzip $ZIP_FILE"
 
 # Set permissions
-log_message "Setting 0775 permissions for runtimes and apps..."
+log_message "Setting permissions for runtimes and apps..."
 sudo chmod -R 775 /usr/crank/runtimes /usr/crank/apps
 
 # Copy scripts
@@ -147,9 +106,12 @@ else
     log_message "Warning: Scripts directory not found. Skipping script copying."
 fi
 
-sudo cp -f -r "$APP_PATH/firmware/"* "$APP_FIRMWARE"
-sudo cp -f -r "$APP_PATH/firmware/"* "$APP_BACKEND"
-sudo chmod 775 "$APP_BACKEND/"*
+# Copy firmware and backend 
+log_message "Copying firmware and backend files..."
+for DEST in "$APP_FIRMWARE" "$APP_BACKEND"; do
+    sudo cp -f -r "$APP_PATH/firmware/"* "$DEST"
+    sudo chmod 775 "$DEST/"*
+done
 
 # Copy and configure services
 log_message "Copying and configuring services..."
@@ -171,8 +133,7 @@ if [[ -d "$APP_PATH/services" ]]; then
         sudo chmod 0755 "$dest"
     done
 else
-    log_message "Error: Services directory not found."
-    exit 1
+    handle_error "Services directory not found."
 fi
 
 # Remove connection handlers
@@ -196,6 +157,20 @@ SERVICES_TO_ENABLE=(
     "systemd-resolved.service"
 )
 
+log_message "Re-enabling and restarting services..."
+ERROR=0
+for service in "${SERVICES_TO_ENABLE[@]}"; do
+    log_message "Enabling and starting $service..."
+    systemctl enable "$service"
+    systemctl restart "$service"
+    if [[ $? -ne 0 ]]; then
+        log_message "Error: Failed to restart $service"
+        ERROR=1
+    fi
+done
+
+[[ $ERROR -ne 0 ]] && handle_error "One or more services failed to restart."
+
 # Rename weston service
 log_message "Renaming weston service..."
 if [[ -e "/lib/systemd/system/weston.service" ]]; then
@@ -210,8 +185,7 @@ log_message "Copying version $version to the apps directory..."
 if [[ "$operation" == "update" ]]; then
     log_message "Updating the application..."
     if [[ -z "$LATEST_VERSION" ]]; then
-        log_message "No versions found in $APP_PATH/app"
-        exit 1
+        handle_error "No versions found in $APP_PATH/app"
     else
         sudo cp -f -r "$APP_PATH/gui/$LATEST_VERSION/"* "$APP_GUI"
         log_message "Software version $LATEST_VERSION updated"
@@ -223,16 +197,8 @@ fi
 
 # Change boot logo
 log_message "Changing the system boot logo..."
-if [[ "$source" == "github" ]]; then
-    BOOT_LOGO="$APP_PATH/img/logo.bmp"
-else
-    BOOT_LOGO="$USB_PATH/img/logo.bmp"
-fi
-
-if [[ ! -f "$BOOT_LOGO" ]]; then
-    log_message "Error: Boot logo file not found."
-    exit 1
-fi
+BOOT_LOGO="$APP_PATH/img/logo.bmp"
+[[ -f "$BOOT_LOGO" ]] || handle_error "Boot logo file not found."
 sudo cp -f "$BOOT_LOGO" /run/media/mmcblk2p1/logo.bmp
 
 # Remove temporary files if source is github
@@ -245,14 +211,6 @@ fi
 log_message "Synchronizing file system and clearing cache..."
 sync 
 echo 3 > /proc/sys/vm/drop_caches
-
-# Re-enable and restart services
-log_message "Re-enabling and restarting services..."
-for service in "${SERVICES_TO_ENABLE[@]}"; do
-    log_message "Enabling and starting $service..."
-    systemctl enable "$service"
-    systemctl restart "$service"
-done
 
 # Reboot
 log_message "Rebooting..."
