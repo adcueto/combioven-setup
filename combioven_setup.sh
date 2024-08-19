@@ -29,7 +29,10 @@ USB_PATH="/media/usb"
 EXTRACTED_DIR_NAME="combioven_setup-master"
 APP_PATH_GITHUB="$TEMP_DIR/$EXTRACTED_DIR_NAME"
 APP_PATH_USB="$USB_PATH"
-APP_DEST="/usr/crank/apps/ProServices"
+APP_GUI="/usr/crank/apps/interface"
+APP_BACKEND="/usr/crank/apps/backend"
+APP_FIRMWARE="/usr/crank/apps/firmware"
+
 
 # Function to log messages to the log file
 log_message() {
@@ -105,7 +108,11 @@ log_message "Latest version found: $LATEST_VERSION"
 
 # Create necessary directories
 log_message "Creating directory structure..."
-sudo mkdir -p /usr/crank/apps /usr/crank/runtimes /usr/crank/apps/ProServices
+sudo mkdir -p /usr/crank/apps /usr/crank/runtimes "$APP_GUI" "$APP_BACKEND" "$APP_FIRMWARE"
+sudo rm -rf "${APP_GUI:?}"/*
+sudo rm -rf "${APP_BACKEND:?}"/*
+sudo rm -rf "${APP_FIRMWARE:?}"/*
+
 
 # Unzip file into runtimes
 log_message "Unzipping linux-imx8yocto-armle-opengles file..."
@@ -140,6 +147,10 @@ else
     log_message "Warning: Scripts directory not found. Skipping script copying."
 fi
 
+sudo cp -f -r "$APP_PATH/firmware/"* "$APP_FIRMWARE"
+sudo cp -f -r "$APP_PATH/firmware/"* "$APP_BACKEND"
+sudo chmod 775 "$APP_BACKEND/"*
+
 # Copy and configure services
 log_message "Copying and configuring services..."
 if [[ -d "$APP_PATH/services" ]]; then
@@ -147,8 +158,8 @@ if [[ -d "$APP_PATH/services" ]]; then
     ls -l "$APP_PATH/services" | tee -a "$LOG_FILE"
     SERVICES=(
         "$APP_PATH/services/storyboard_splash.service:/etc/systemd/system/"
-        "$APP_PATH/services/storyboard.service:/etc/systemd/system/"
-        "$APP_PATH/services/combi_backend.service:/lib/systemd/system/"
+        "$APP_PATH/services/combioven_storyboard.service:/etc/systemd/system/"
+        "$APP_PATH/services/combioven_backend.service:/lib/systemd/system/"
         "$APP_PATH/services/wired.network:/etc/systemd/network/"
         "$APP_PATH/services/wireless.network:/etc/systemd/network/"
         "$APP_PATH/services/wpa_supplicant@wlan0.service:/etc/systemd/system/"
@@ -179,8 +190,8 @@ sudo systemctl daemon-reload
 
 SERVICES_TO_ENABLE=(
     "storyboard_splash.service"
-    "storyboard.service"
-    "combi_backend.service"
+    "combioven_storyboard.service"
+    "combioven_backend.service"
     "wpa_supplicant@wlan0.service"
     "systemd-resolved.service"
 )
@@ -202,12 +213,12 @@ if [[ "$operation" == "update" ]]; then
         log_message "No versions found in $APP_PATH/app"
         exit 1
     else
-        sudo cp -f -r "$APP_PATH/gui/$LATEST_VERSION/"* "$APP_DEST"
+        sudo cp -f -r "$APP_PATH/gui/$LATEST_VERSION/"* "$APP_GUI"
         log_message "Software version $LATEST_VERSION updated"
     fi
 else
     log_message "Rolling back to version $version..."
-    sudo cp -f -r "$APP_PATH/gui/$version/"* "$APP_DEST"
+    sudo cp -f -r "$APP_PATH/gui/$version/"* "$APP_GUI"
 fi
 
 # Change boot logo

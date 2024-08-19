@@ -1,7 +1,0 @@
-[Unit]
-Description=Storyboard backend init
-After=basic.service X.service thermal-zone-init.service
-[Service]
-ExecStart=/usr/crank/combi_backend
-[Install]
-WantedBy=multi-user.target

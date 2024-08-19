@@ -11,7 +11,7 @@
 
    export SBROOT=/usr/crank/runtimes/linux-imx8yocto-armle-opengles_2.0-obj
    export SB_ENGINE=$SBROOT/bin/sbengine
-   export LAUNCHER_APP=/usr/crank/apps/ProServices/CombiOven_frontend.gapp
+   export LAUNCHER_APP=/usr/crank/apps/interface/combioven-gui.gapp
    export SB_PLUGINS=$SBROOT/plugins
    export LD_LIBRARY_PATH=$SBROOT/lib
    export SBIO_CONSOLE_LOGGING
