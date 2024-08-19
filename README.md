@@ -3,16 +3,16 @@
 
 ![Logo de la aplicación](/img/board.png)
 
-Este repositorio contiene el script `setup_combioven.sh` que configura una tarjeta NXP Yocto para que funcione con la aplicación CombiOven. El script puede actualizar o hacer rollback de la aplicación utilizando archivos desde una unidad USB o desde un repositorio de GitHub.
+Este repositorio contiene el script `combioven_setup.sh` que configura una tarjeta NXP Yocto para que funcione con la aplicación CombiOven. El script puede actualizar o hacer rollback de la aplicación utilizando archivos desde una unidad USB o desde un repositorio de GitHub.
 
 ## Descripción
 
-El script `setup_combioven.sh` automatiza el proceso de copia de archivos de la aplicación, configuración de permisos y configuración de servicios del sistema para asegurar una instalación sin problemas.
+El script `combioven_setup.sh` automatiza el proceso de copia de archivos de la aplicación, configuración de permisos y configuración de servicios del sistema para asegurar una instalación sin problemas.
 
 ## Uso
 
 ```bash
-./setup_combioven.sh <operation> <source> [version]
+./combioven_setup.sh <operation> <source> [version]
 ```
 
 ### Operaciones
@@ -88,7 +88,7 @@ El script `setup_combioven.sh` automatiza el proceso de copia de archivos de la 
 
    - Para realizar rollback a una versión anterior, asegúrate de que la versión exista en el repositorio.
      ```bash
-     curl -sS https://raw.githubusercontent.com/adcueto/setup_combioven/master/setup_combioven.sh | bash -s rollback github 1.6.3
+     curl -sS https://raw.githubusercontent.com/adcueto/setup_combioven/master/setup_combioven.sh | bash -s rollback github 1.6.8
      ```
 
 ## Contribuciones
