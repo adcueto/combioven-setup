@@ -256,4 +256,5 @@ done
 
 # Reboot
 log_message "Rebooting..."
+sleep 2
 sudo reboot
