@@ -22,11 +22,11 @@
 
 # Variables
 LOG_FILE="/var/log/setup_combioven.log"
-GITHUB_REPO_URL="https://github.com/adcueto/setup_combioven/archive/refs/heads/master.zip"
+GITHUB_REPO_URL="https://github.com/adcueto/combioven_setup/archive/refs/heads/master.zip"
 TEMP_DIR="/tmp/github_repo"
 DOWNLOAD_FILE="/tmp/github_repo.zip"
 USB_PATH="/media/usb"
-EXTRACTED_DIR_NAME="setup_combioven-master"
+EXTRACTED_DIR_NAME="combioven_setup-master"
 APP_PATH_GITHUB="$TEMP_DIR/$EXTRACTED_DIR_NAME"
 APP_PATH_USB="$USB_PATH"
 APP_DEST="/usr/crank/apps/ProServices"
@@ -185,11 +185,6 @@ SERVICES_TO_ENABLE=(
     "systemd-resolved.service"
 )
 
-for service in "${SERVICES_TO_ENABLE[@]}"; do
-    sudo systemctl enable "$service"
-    sudo systemctl start "$service"
-done
-
 # Rename weston service
 log_message "Renaming weston service..."
 if [[ -e "/lib/systemd/system/weston.service" ]]; then
@@ -234,6 +229,19 @@ if [[ "$source" == "github" ]]; then
     log_message "Removing temporary files..."
     sudo rm -rf "$TEMP_DIR" "$DOWNLOAD_FILE"
 fi
+
+# Sync changes and clear cache
+log_message "Synchronizing file system and clearing cache..."
+sync 
+echo 3 > /proc/sys/vm/drop_caches
+
+# Re-enable and restart services
+log_message "Re-enabling and restarting services..."
+for service in "${SERVICES_TO_ENABLE[@]}"; do
+    log_message "Enabling and starting $service..."
+    systemctl enable "$service"
+    systemctl restart "$service"
+done
 
 # Reboot
 log_message "Rebooting..."
