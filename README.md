@@ -55,17 +55,17 @@ El script `combioven_setup.sh` automatiza el proceso de copia de archivos de la 
 
 4. **Dar permisos de ejecución**
    ```bash
-   sudo chmod +x /media/usb/setup_combioven.sh
+   sudo chmod +x /media/usb/combioven_setup.sh
    ```
 
 5. **Ejecutar el script para cargar la aplicación**
    - Ejemplo para realizar rollback
      ```bash
-     /media/usb/setup_combioven.sh rollback usb 1.5.2 
+     /media/usb/combioven_setup.sh rollback usb 1.5.2 
      ```
    - Ejemplo para actualizar a la última versión de software
      ```bash
-     /media/usb/setup_combioven.sh update usb
+     /media/usb/combioven_setup.sh update usb
      ```
 
 6. **Desmontar la memoria USB**
@@ -83,12 +83,12 @@ El script `combioven_setup.sh` automatiza el proceso de copia de archivos de la 
 2. **Ejecutar el script de actualización**
    - Para actualizar a la última versión
      ```bash
-     curl -sS https://raw.githubusercontent.com/adcueto/setup_combioven/master/setup_combioven.sh | bash -s update github
+     curl -sS https://raw.githubusercontent.com/adcueto/combioven_setup/master/setup_combioven.sh | bash -s update github
      ```
 
    - Para realizar rollback a una versión anterior, asegúrate de que la versión exista en el repositorio.
      ```bash
-     curl -sS https://raw.githubusercontent.com/adcueto/setup_combioven/master/setup_combioven.sh | bash -s rollback github 1.6.8
+     curl -sS https://raw.githubusercontent.com/adcueto/combioven_setup/master/setup_combioven.sh | bash -s rollback github 1.6.8
      ```
 
 ## Contribuciones
