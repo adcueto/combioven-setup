@@ -12,12 +12,12 @@
 ##
 
 # Variables
-LOG_FILE="/var/log/setup_combioven.log"
-GITHUB_REPO_URL="https://github.com/adcueto/combioven_setup/archive/refs/heads/master.zip"
+LOG_FILE="/var/log/combioven-setup.log"
+GITHUB_REPO_URL="https://github.com/adcueto/combioven-setup/archive/refs/heads/master.zip"
 TEMP_DIR="/tmp/github_repo"
 DOWNLOAD_FILE="/tmp/github_repo.zip"
 USB_PATH="/media/usb"
-EXTRACTED_DIR_NAME="combioven_setup-master"
+EXTRACTED_DIR_NAME="combioven-setup-master"
 APP_PATH_GITHUB="$TEMP_DIR/$EXTRACTED_DIR_NAME"
 APP_PATH_USB="$USB_PATH"
 APP_GUI="/usr/crank/apps/interface"
