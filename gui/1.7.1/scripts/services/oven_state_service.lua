@@ -8,12 +8,12 @@ local oven_state_service = {}
 -- Log a composite message
 function oven_state_service.logOvenState()
     local oven_state = oven_status_manager.get_state()
-    logger.info("OvenState: " .. tostring(oven_state.OvenState) .. "; " ..
-                "OvenMode: " .. tostring(oven_state.OvenMode) .. "; " ..
-                "CookingMode: " .. tostring(oven_state.CookingMode) .. "; " ..
-                "ManualMode: " .. tostring(oven_state.ManualMode) .. "; " ..
-                "ManualSubMode: " .. tostring(oven_state.ManualSubMode) .. "; " ..
-                "WashingMode: " .. tostring(oven_state.WashingMode))
+    logger.info("OvenState: " .. tostring(oven_state.OvenState))
+    logger.info("OvenMode: " .. tostring(oven_state.OvenMode))
+    logger.info("ManualMode: " .. tostring(oven_state.ManualMode))
+    logger.info("ManualSubMode: " .. tostring(oven_state.ManualSubMode))
+    logger.info("WashingMode: " .. tostring(oven_state.WashingMode))
+    
 end
 
 -- Update and log power state
@@ -27,7 +27,7 @@ function oven_state_service.updateDoorState(value)
     oven_status_manager.update_door_state(value)
     --oven_state_service.logOvenState()
 end
-
+  
 -- Update and log cooking mode
 function oven_state_service.updateCookingMode(value)
     oven_status_manager.update_cooking_mode(value)

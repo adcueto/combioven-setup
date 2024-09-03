@@ -128,6 +128,7 @@ function ClearBlinkTimer()
     local data
     if timerBlinkID then
       data = gre.timer_clear_interval(timerBlinkID)
+      timerBlinkID = nil
     end
 end
 --[[******************** END BLINK TIMER **************************]]--
@@ -812,7 +813,7 @@ end
 
 function ToggleBkgStepAuto(control)
   local data = {} 
-  logger.info("Toggle Looping")
+  logger.info("Toggle Back Step Auto") ---checar
   
   if (gToggleState[control] == nil) then
    -- if it doesn't exisit yet create the toggle and set it to off
@@ -889,6 +890,7 @@ function CBExecuteWashRecommend()
   local user_select
   local data = {}
   local get_recommend = gre.get_value("Layer_DialogBoxSuggest.text_InputField.text" )
+  logger.info("Running Whashing Mode")
   oven_state_service.updateOvenState(OvenEnums.OvenState.RUNNING)
   oven_state_service.updateOvenMode(OvenEnums.OvenMode.WASHING)
 
@@ -960,7 +962,8 @@ function CBExecuteWashRecommend()
     oven_state_service.updateWashingMode(OvenEnums.WashingMode.INTENSE)
     
   end
-  
+  logger.info("## Oven status ##")
+  oven_state_service.updateOvenMode(OvenEnums.OvenMode.WASHING)
   oven_state_service.logOvenState()
   gre.set_data(data)
   CBUpdateTime(TIME_WASHING, 0)

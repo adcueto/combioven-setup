@@ -40,7 +40,7 @@ function logger.init()
     if not logger.initialized then
         -- Directory where log files are stored
         local osenv = gre.env({ "target_os", "target_cpu" })
-        local log_dir ="/usr/crank/apps/ProServices/logs"
+        local log_dir ="/usr/crank/apps/interface/logs"
         if osenv.target_os == "win32" then
           log_dir ="./logs"
         end
@@ -82,7 +82,7 @@ function logger.log(level, message)
         local line = info.currentline
 
         --local logMessage = string.format("[%s] %s: %s (at %s:%d)", os.date("%Y-%m-%d %H:%M:%S"), level, message, src, line)
-        local logMessage = string.format(" %s: %s (at %s:%d)", level, message, src, line)
+        local logMessage = string.format(" [%s][%s:%d]: %s", level, src, line, message)
         -- Write to the log file
         --[[
         if logger.logFile then

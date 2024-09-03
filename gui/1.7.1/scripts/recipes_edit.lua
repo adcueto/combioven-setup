@@ -9,6 +9,9 @@ initialize dynamic tables, calls to store on database and clear after use
 For more information email humberto.rodriguez@pro-servicios.com
 ** Author: Jose Adrian PErez Cueto **
 ]]--
+local logger = require("components.logger")
+local oven_state_service = require("services.oven_state_service")
+local OvenEnums = require("components.oven_status_enums")
 
 local SLIDER_MAX_CREATE = 505
 local BAR_COLOR_MAXWIDTH = 510
@@ -44,7 +47,6 @@ function CBLoadEditRecipe(mapargs)
   
   
   if(typeRecipe == "Intelligent") then
-
    SwitchRecipe(recipe_id, "recipes_auto")
    CBDisplayRecipeSteps_Intelligent()
 

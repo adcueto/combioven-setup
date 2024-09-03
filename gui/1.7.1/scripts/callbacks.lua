@@ -386,7 +386,6 @@ function CBUpdateMode(mapargs)
     oven_state_service.updateOvenMode(OvenEnums.OvenMode.COOKING)
     oven_state_service.updateCookingMode(OvenEnums.CookingMode.MANUAL)
     oven_state_service.updateManualMode(OvenEnums.ManualMode.CONVECTION)
-    oven_state_service.logOvenState()
     
   elseif (mapargs.context_control == 'Layer_ModeFunctBar.bkg_Combined_on') then
     MAX_TEMP   = gre.get_value("Layer_Combi_Levels.Combi_TextSlider2.max_temp")
@@ -398,7 +397,6 @@ function CBUpdateMode(mapargs)
     oven_state_service.updateOvenMode(OvenEnums.OvenMode.COOKING)
     oven_state_service.updateCookingMode(OvenEnums.CookingMode.MANUAL)
     oven_state_service.updateManualMode(OvenEnums.ManualMode.COMBINED)
-    oven_state_service.logOvenState()
     
   elseif (mapargs.context_control == 'Layer_ModeFunctBar.bkg_Steam_on') then
     MAX_TEMP   = gre.get_value("Layer_Combi_Levels.Combi_TextSlider2.max_temp")
@@ -411,11 +409,12 @@ function CBUpdateMode(mapargs)
     oven_state_service.updateOvenMode(OvenEnums.OvenMode.COOKING)
     oven_state_service.updateCookingMode(OvenEnums.CookingMode.MANUAL)
     oven_state_service.updateManualMode(OvenEnums.ManualMode.STEAM)
-    oven_state_service.logOvenState()
+    
     
   end
   gre.send_event ("mode_"..gCombiOvenMode, "combioven_backend")
   logger.info("Sending to backend: -> ".."mode_"..gCombiOvenMode)
+  oven_state_service.logOvenState()
 end
 
 
@@ -473,76 +472,63 @@ function CBUpdateCombiOven(mapargs)
   if (ev_data.target_time ~= nil and ev_data.target_time ~= gTimeCooking) then
     gTimeCooking = ev_data.target_time
     DisplayCurrentTime()
-    logger.info("Target time: "..tostring(gTimeCooking))
   end
   
   if (ev_data.target_temperature ~= nil and ev_data.target_temperature ~= gTemperature) then
     gTemperature = ev_data.target_temperature
     DisplayCurrentTemperature()
-    logger.info("Target Temperature: "..tostring(gTemperature))
   end
   
   if (ev_data.target_probe ~= nil and ev_data.target_probe ~= gTempProbe) then
     gTempProbe = ev_data.target_probe
     DisplayCurrentTempProbe()
-    logger.info("Target Temperature: "..tostring(gTempProbe))
   end
   
   if (ev_data.target_steam ~= nil and ev_data.target_steam ~= gSteamPercent) then
     gSteamPercent = ev_data.target_steam
     DisplayCurrentSteam()
-    logger.info("Target Steam: "..tostring(gSteamPercent))
   end
 
   if (ev_data.target_fanspeed ~= nil and ev_data.target_fanspeed ~= gFanSpeed) then
     gFanSpeed = ev_data.target_fanspeed
     DisplayCurrentSpeed ()
-    logger.info("Target FanSpeed: "..tostring(gFanSpeed))
   end
   
   if (ev_data.current_probe ~= nil and ev_data.current_probe ~= gCurrent_probe) then
     gCurrent_probe = ev_data.current_probe
     DisplayActualProbe()
-    logger.info("Target Current Probe: "..tostring(gCurrent_probe))
   end
   
   if (ev_data.current_humidity ~= nil and ev_data.current_humidity ~= gCurrent_humidity) then
     gCurrent_humidity = ev_data.current_humidity
     DisplayActualHumidity()
-    logger.info("Target Current Humidity: "..tostring(gCurrent_humidity))
   end
   
   if (ev_data.current_temperature ~= nil and ev_data.current_temperature ~= gCurrent_temperature) then
     gCurrent_temperature = ev_data.current_temperature
     DisplayProgressBar()
-    logger.info("Target Current Temperature: "..tostring(gCurrent_temperature))
   end
   
   if (ev_data.toggle_preheat ~= nil) then  
     CBSetTogglePreheat('Layer_Combi_Menu.bkg_Preheat', ev_data.toggle_preheat)
-    logger.info("Toggle Preheat: "..tostring(ev_data.toggle_preheat))
   end
   
   if (ev_data.toggle_cooling ~= nil) then
     CBSetToggleCooling('Layer_Combi_Menu.bkg_Cooling', ev_data.toggle_cooling)
-    logger.info("Toggle Cooling: "..tostring(ev_data.toggle_cooling))
   end
   
   if (ev_data.toggle_looptime ~= nil) then
      CBSetToggleLoopTime('Layer_Combi_Menu.bkg_LoopTimer', ev_data.toggle_looptime)
-     logger.info("Toggle Looptime: "..tostring(ev_data.toggle_looptime))
   end
   
   if (ev_data.toggle_probe ~= nil) then
     CBSetToggleProbe('Layer_Combi_Menu.bkg_Probe', ev_data.toggle_probe)
-    logger.info("Toggle Probe: "..tostring(ev_data.toggle_probe))
   end
   
   if (ev_data.toggle_state ~= nil) then
     CBSetToggleState(mapargs, ev_data.toggle_state)
     gCombiOvenState = ev_data.toggle_state
-    logger.info("Toggle State: "..tostring(gCombiOvenState))
-    
+  
   end
   
   if (ev_data.encoder_data ~= nil and encoder_options.data ~= nil and ev_data.encoder_parameter == 6) then

@@ -10,6 +10,11 @@ For more information email humberto.rodriguez@pro-servicios.com
 local logger = require("components.logger")
 logger.setLevel("DEBUG")
 
+local oven_state_service = require("services.oven_state_service")
+local OvenEnums = require("components.oven_status_enums")
+
+
+
 local myenv = gre.env({ "target_os", "target_cpu" })
 local timerDate       = 2
 local timerDateID     = nil
@@ -41,9 +46,9 @@ function UpdateDisplayDate()
     UseTimeCounter()
     ProcessorTemp()
     CBWifiConnected()
-    if ALERT_DISTURB and not (CombiOven.OvenMode == Oven.OvenMode.WASHING and CombiOven.OvenState == Oven.OvenState.RUNNING) then
-       ShowWashAlert()
-       
+    
+    if ALERT_DISTURB and not (oven_state_service.getOvenMode() == OvenEnums.OvenMode.WASHING and oven_state_service.getOvenState() == OvenEnums.OvenState.RUNNING) then
+       ShowWashAlert() 
     end
   end
 end
