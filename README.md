@@ -83,12 +83,12 @@ El script `combioven_setup.sh` automatiza el proceso de copia de archivos de la 
 2. **Ejecutar el script de actualización**
    - Para actualizar a la última versión
      ```bash
-     curl -sS https://raw.githubusercontent.com/adcueto/combioven_setup/master/combioven_setup.sh | bash -s update github
+     curl -sS https://raw.githubusercontent.com/adcueto/combioven_setup/master/combioven-setup.sh | bash -s update github
      ```
 
    - Para realizar rollback a una versión anterior, asegúrate de que la versión exista en el repositorio.
      ```bash
-     curl -sS https://raw.githubusercontent.com/adcueto/combioven_setup/master/combioven_setup.sh | bash -s rollback github 1.6.8
+     curl -sS https://raw.githubusercontent.com/adcueto/combioven_setup/master/combioven-setup.sh | bash -s rollback github 1.6.8
      ```
 
 ## Contribuciones
